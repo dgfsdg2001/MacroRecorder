@@ -111,16 +111,20 @@ def hook_procedure(nCode, wParam, lParam):
         wParam: Identifier of the message
         lParam: Address to an input struct based on wParam
     """
+    # Terminated condition
+    if is_pressed(END_KEY):
+        uninstall_hook(kb_handle)
+        uninstall_hook(mouse_handle)
+        user32.PostQuitMessage(1)
+        writer.wait_event()
+        return user32.CallNextHookEx(kb_handle, nCode, wParam, c_ulonglong(lParam))
+    
     handle = kb_handle
-
     # KEYDOWN event
     if nCode == HC_ACTION and wParam == WM_KEYDOWN:
         kb = KBDLLHOOKSTRUCT.from_address(lParam)
         if kb.vkCode in VIRTUAL_KEYS:
-            writer.keyboard_event(
-                kb.vkCode,
-                CURRENT_WINDOW=get_current_window()
-            )
+            writer.keyboard_event(kb.vkCode)
             handle = kb_handle 
 
     # MOUSE event
@@ -133,17 +137,8 @@ def hook_procedure(nCode, wParam, lParam):
         res_x, res_y = get_screen_resolution()
         x = int(mouse.pt.x * 65536 / res_x)
         y = int(mouse.pt.y * 65536 / res_y)
-        writer.mouse_event(
-            x, y, right_click,
-            CURRENT_WINDOW=get_current_window()
-        )
+        writer.mouse_event(x, y, right_click)
         handle = mouse_handle
-
-    # Terminated condition
-    if is_pressed(END_KEY):
-        uninstall_hook(kb_handle)
-        uninstall_hook(mouse_handle)
-        user32.PostQuitMessage(1)
 
     return user32.CallNextHookEx(handle, nCode, wParam, c_ulonglong(lParam))
 

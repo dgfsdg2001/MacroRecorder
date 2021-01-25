@@ -15,7 +15,30 @@ HC_ACTION = 0   # The wParam and lParam parameters contain information about a m
 
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 VIRTUAL_KEYS = {
+    0x08: "BACKSPACE",  # BACKSPACE key
+    0x09: "TAB",        # TAB key
+    0x0C: "CLEAR",      # CLEAR key
+    0x0D: "ENTER",      # ENTER key
+    0x10: "SHIFT",      # SHIFT key
     0x11: "CTRL",       # CTRL key
+    0x12: "ALT",        # ALT key
+    0x13: "PAUSE",      # PAUSE key
+    0x14: "CAPSLOCK",   # CAPS LOCK key
+    0x1B: "ESC",        # ESC key
+    0x20: "SPACEBAR",   # SPACEBAR
+    0x21: "PAGEUP",     # PAGE UP key
+    0x22: "PAGEDOWN",   # PAGE DOWN key
+    0x23: "END",        # END key
+    0x24: "HOME",       # HOME key
+    0x25: "LEFT",       # LEFT ARROW key
+    0x26: "UP",         # UP ARROW key
+    0x27: "RIGHT",      # RIGHT ARROW key
+    0x28: "DOWN",       # DOWN ARROW key
+    0x29: "SELECT",     # SELECT key
+    0x2A: "PRINT",      # PRINT key
+    0x2C: "SNAPSHOT",   # PRINT SCREEN key
+    0x2D: "INSERT",     # INS key
+    0x2E: "DELETE",     # DEL key
     0x30: "0",  # 0 key
     0x31: "1",  # 1 key
     0x32: "2",  # 2 key
@@ -52,6 +75,8 @@ VIRTUAL_KEYS = {
     0x58: "X",  # X key
     0x59: "Y",  # Y key
     0x5A: "Z",  # Z key
+    0x5B: "LWIN",   # Left Windows key (Natural keyboard)
+    0x5C: "RWIN",   # Right Windows key (Natural keyboard)
     0x70: "F1", # F1 key
     0x71: "F2", # F2 key
     0x72: "F3", # F3 key
@@ -64,6 +89,23 @@ VIRTUAL_KEYS = {
     0x79: "F10", # F10 key
     0x7A: "F11", # F11 key
     0x7B: "F12", # F12 key
+    0x90: "NUMLOCK",    # NUM LOCK key
+    0x91: "SCROLL",     # SCROLL LOCK key
+    0xA0: "LSHFT",      # Left SHIFT key
+    0xA1: "RSHFT",      # Right SHIFT key
+    0xA2: "LCTRL",      # Left CONTROL key
+    0xA3: "RCTRL",      # Right CONTROL key
+    0xBA: ";",      # `;` for US standard keyboard. vary by keyboard
+    0xBB: "+",
+    0xBC: ",",
+    0xBD: "-",
+    0xBE: ".",
+    0xBF: "/",
+    0xC0: "~",      # `~` for US standard keyboard. vary by keyboard
+    0xDB: "[",      # `[` for US standard keyboard. vary by keyboard
+    0xDC: "\\",     # `\` for US standard keyboard. vary by keyboard
+    0xDD: "]",      # `]` for US standard keyboard. vary by keyboard
+    0xDE: "'",      # `'` for US standard keyboard. vary by keyboard
 }
 
 VIRTUAL_KEYS_REVERSE = {
@@ -145,6 +187,9 @@ class INPUT(Structure):_fields_=[
 INPUT_MOUSE     = 0     # Mouse event. Use the mi structure of the union.
 INPUT_KEYBOARD  = 1     # Keyboard event. Use the ki structure of the union.
 INPUT_HARDWARE  = 2     # Hardware event. Use the hi structure of the union.
+
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
+KEYEVENTF_KEYUP = 0x0002  # If specified, the key is being released. If not specified, the key is being pressed.
 
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-monitorfromwindow
 # https://lazarus-ccr.sourceforge.io/docs/lcl/lcltype/monitor_defaulttoprimary.html
