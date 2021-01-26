@@ -1,18 +1,32 @@
+"""
+win_const.py - Definition of data structure and consts for the Windows API.
+"""
+
 from ctypes import (
     WINFUNCTYPE, HRESULT, c_int, Structure, Union
 )
 from ctypes.wintypes import (
-    WORD, DWORD, LPARAM, WPARAM, MSG, 
+    WORD, DWORD, LPARAM, WPARAM, MSG,
     POINT, PULONG, LONG
 )
 
-WH_KEYBOARD_LL = 13     # Hook ID for  low-level keyboard input events
-WH_MOUSE_LL    = 14     # Hook ID for low-level mouse input events
-WM_KEYDOWN      = 0x0100    # Posted when a nonsystem key is pressed
-WM_LBUTTONDOWN  = 0x0201    # Posted when the user presses the left mouse button
-WM_RBUTTONDOWN  = 0x0204    # Posted when the user presses the right mouse button
-HC_ACTION = 0   # The wParam and lParam parameters contain information about a mouse/keyboard message
+# Windows hook ID
+# https://docs.microsoft.com/en-us/windows/win32/winmsg/about-hooks
+WH_KEYBOARD_LL = 13     # Hook ID for low-level keyboard input events
+WH_MOUSE_LL = 14        # Hook ID for low-level mouse input events
 
+# Keyboard input notifications
+# https://docs.microsoft.com/en-us/windows/win32/inputdev/keyboard-input-notifications
+WM_KEYDOWN = 0x0100       # Posted when a nonsystem key is pressed
+WM_LBUTTONDOWN = 0x0201   # Posted when the user presses the left mouse button
+WM_RBUTTONDOWN = 0x0204   # Posted when the user presses the right mouse button
+
+# A code the hook procedure uses to determine how to process the keyboard/mouse
+# message.
+HC_ACTION = 0
+
+# The virtual-key codes used by Windows system. The key-value pair maps a
+# virtual-key code to readable keystroke for US standard keyboard.
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 VIRTUAL_KEYS = {
     0x08: "BACKSPACE",  # BACKSPACE key
@@ -77,18 +91,18 @@ VIRTUAL_KEYS = {
     0x5A: "Z",  # Z key
     0x5B: "LWIN",   # Left Windows key (Natural keyboard)
     0x5C: "RWIN",   # Right Windows key (Natural keyboard)
-    0x70: "F1", # F1 key
-    0x71: "F2", # F2 key
-    0x72: "F3", # F3 key
-    0x73: "F4", # F4 key
-    0x74: "F5", # F5 key
-    0x75: "F6", # F6 key
-    0x76: "F7", # F7 key
-    0x77: "F8", # F8 key
-    0x78: "F9", # F9 key
-    0x79: "F10", # F10 key
-    0x7A: "F11", # F11 key
-    0x7B: "F12", # F12 key
+    0x70: "F1",   # F1 key
+    0x71: "F2",   # F2 key
+    0x72: "F3",   # F3 key
+    0x73: "F4",   # F4 key
+    0x74: "F5",   # F5 key
+    0x75: "F6",   # F6 key
+    0x76: "F7",   # F7 key
+    0x77: "F8",   # F8 key
+    0x78: "F9",   # F9 key
+    0x79: "F10",  # F10 key
+    0x7A: "F11",  # F11 key
+    0x7B: "F12",  # F12 key
     0x90: "NUMLOCK",    # NUM LOCK key
     0x91: "SCROLL",     # SCROLL LOCK key
     0xA0: "LSHFT",      # Left SHIFT key
@@ -108,93 +122,125 @@ VIRTUAL_KEYS = {
     0xDE: "'",      # `'` for US standard keyboard. vary by keyboard
 }
 
+# The reverse maaping of VIRTUAL_KEYS.
 VIRTUAL_KEYS_REVERSE = {
     value: key for key, value in VIRTUAL_KEYS.items()
 }
 
+# An application-defined or library-defined callback function signature used
+# with the SetWindowsHookEx function.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nc-winuser-hookproc
 HOOKPROC = WINFUNCTYPE(HRESULT, c_int, WPARAM, LPARAM)
 
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-kbdllhookstruct
-# KBDLLHOOKSTRUCT structure (winuser.h)
+
 # Contains information about a low-level keyboard input event.
-class KBDLLHOOKSTRUCT(Structure): _fields_=[ 
-    ('vkCode',DWORD),
-    ('scanCode',DWORD),
-    ('flags',DWORD),
-    ('time',DWORD),
-    ('dwExtraInfo',DWORD)]
+# KBDLLHOOKSTRUCT structure (winuser.h)
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-kbdllhookstruct
+class KBDLLHOOKSTRUCT(Structure):
+    _fields_ = [
+        ("vkCode", DWORD),
+        ("scanCode", DWORD),
+        ("flags", DWORD),
+        ("time", DWORD),
+        ("dwExtraInfo", DWORD)
+    ]
 
 
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct?redirectedfrom=MSDN
-# MSLLHOOKSTRUCT structure (winuser.h)
 # Contains information about a low-level mouse input event.
-class MSLLHOOKSTRUCT(Structure): _fields_=[
-    ("pt", POINT),
-    ("mouseData", DWORD),
-    ("flags", DWORD),
-    ("time", DWORD),
-    ("dwExtraInfo", PULONG)] # ULONG_PTR 
+# MSLLHOOKSTRUCT structure (winuser.h)
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct?redirectedfrom=MSDN
+class MSLLHOOKSTRUCT(Structure):
+    _fields_ = [
+        ("pt", POINT),
+        ("mouseData", DWORD),
+        ("flags", DWORD),
+        ("time", DWORD),
+        ("dwExtraInfo", PULONG)
+    ]
 
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-mouseinput
-# MOUSEINPUT structure (winuser.h)
+
 # Contains information about a simulated mouse event.
-class MOUSEINPUT(Structure):_fields_=[
-    ("dx", LONG),
-    ("dy", LONG),
-    ("mouseData", DWORD),
-    ("dwFlags", DWORD),
-    ("time", DWORD),
-    ("dwExtraInfo", PULONG)]
-
-MOUSEEVENTF_MOVE        = 0x0001    # Movement occurred.
-MOUSEEVENTF_LEFTDOWN    = 0x0002    # The left button was pressed.
-MOUSEEVENTF_LEFTUP      = 0x0004    # The left button was released.
-MOUSEEVENTF_RIGHTDOWN   = 0x0008    # The right button was pressed.
-MOUSEEVENTF_RIGHTUP     = 0x0010    # The right button was released.
-MOUSEEVENTF_ABSOLUTE    = 0x8000    # The dx and dy members contain normalized absolute coordinates.
+# MOUSEINPUT structure (winuser.h)
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-mouseinput
+class MOUSEINPUT(Structure):
+    _fields_ = [
+        ("dx", LONG),
+        ("dy", LONG),
+        ("mouseData", DWORD),
+        ("dwFlags", DWORD),
+        ("time", DWORD),
+        ("dwExtraInfo", PULONG)
+    ]
 
 
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
-# KEYBDINPUT structure (winuser.h)
+MOUSEEVENTF_MOVE = 0x0001       # Movement occurred.
+MOUSEEVENTF_LEFTDOWN = 0x0002   # The left button was pressed.
+MOUSEEVENTF_LEFTUP = 0x0004     # The left button was released.
+MOUSEEVENTF_RIGHTDOWN = 0x0008  # The right button was pressed.
+MOUSEEVENTF_RIGHTUP = 0x0010    # The right button was released.
+MOUSEEVENTF_ABSOLUTE = 0x8000   # Indicates the dx and dy is normalized.
+
+
 # Contains information about a simulated keyboard event.
-class KEYBDINPUT(Structure):_fields_=[
-    ("wVk", WORD),
-    ("wScan", WORD),
-    ("dwFlags", DWORD),
-    ("time", DWORD),
-    ("dwExtraInfo", PULONG)]
-
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-hardwareinput
-# HARDWAREINPUT structure (winuser.h)
-# Contains information about a simulated message generated by an input device other than a keyboard or mouse.
-class HARDWAREINPUT(Structure):_fields_=[
-    ("uMsg", DWORD),
-    ("wParamL", WORD),
-    ("wParamH", WORD)]
-
-class DUMMYUNIONNAME(Union):_fields_=[
-    ("mi", MOUSEINPUT),
-    ("ki", KEYBDINPUT),
-    ("hi", HARDWAREINPUT)]
-
-# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
-# INPUT structure (winuser.h)
-# Used by SendInput to store information for synthesizing input events such as keystrokes, mouse movement, and mouse clicks.
-class INPUT(Structure):_fields_=[
-    ("type", DWORD),
-    ("u", DUMMYUNIONNAME)]
-
-INPUT_MOUSE     = 0     # Mouse event. Use the mi structure of the union.
-INPUT_KEYBOARD  = 1     # Keyboard event. Use the ki structure of the union.
-INPUT_HARDWARE  = 2     # Hardware event. Use the hi structure of the union.
-
+# KEYBDINPUT structure (winuser.h)
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
-KEYEVENTF_KEYUP = 0x0002  # If specified, the key is being released. If not specified, the key is being pressed.
+class KEYBDINPUT(Structure):
+    _fields_ = [
+        ("wVk", WORD),
+        ("wScan", WORD),
+        ("dwFlags", DWORD),
+        ("time", DWORD),
+        ("dwExtraInfo", PULONG)
+    ]
 
+
+# Contains information about a simulated message generated by an input device
+# other than a keyboard or mouse.
+# HARDWAREINPUT structure (winuser.h)
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-hardwareinput
+class HARDWAREINPUT(Structure):
+    _fields_ = [
+        ("uMsg", DWORD),
+        ("wParamL", WORD),
+        ("wParamH", WORD)
+    ]
+
+
+class DUMMYUNIONNAME(Union):
+    _fields_ = [
+        ("mi", MOUSEINPUT),
+        ("ki", KEYBDINPUT),
+        ("hi", HARDWAREINPUT)
+    ]
+
+
+# Used by SendInput to store information for synthesizing input events such as
+# keystrokes, mouse movement, and mouse clicks.
+# INPUT structure (winuser.h)
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
+class INPUT(Structure):
+    _fields_ = [
+        ("type", DWORD),
+        ("u", DUMMYUNIONNAME)
+    ]
+
+
+# The type of the input event.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
+INPUT_MOUSE = 0     # Mouse event. Use the mi structure of the union.
+INPUT_KEYBOARD = 1  # Keyboard event. Use the ki structure of the union.
+INPUT_HARDWARE = 2  # Hardware event. Use the hi structure of the union.
+
+# Various aspects of a keystroke
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
+KEYEVENTF_KEYUP = 0x0002
+
+# Determines the function's return value if the window does not intersect any
+# display monitor.
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-monitorfromwindow
 # https://lazarus-ccr.sourceforge.io/docs/lcl/lcltype/monitor_defaulttoprimary.html
 MONITOR_DEFAULTTOPRIMARY = 1
 
-# https://docs.microsoft.com/en-us/windows/win32/seccrypto/common-hresult-values
 # Common HRESULT Values
+# https://docs.microsoft.com/en-us/windows/win32/seccrypto/common-hresult-values
 S_OK = 0x00000000   # Operation successful
