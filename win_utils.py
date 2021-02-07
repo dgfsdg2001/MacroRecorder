@@ -11,6 +11,34 @@ kernel32 = windll.kernel32
 shcore = windll.shcore
 
 
+def install_hook(hook_id, proc):
+    """Install a keyboard hook callback function.
+
+    Args:
+        hook_id: Windows hook ID
+        proc: HOOKPROC callback function.
+
+    Return:
+        Handle to the hook procedure if success, None otherwise.
+    """
+    handle = user32.SetWindowsHookExA(hook_id, proc, None, 0)
+    if not handle:
+        # https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
+        msg = "Failed to install hook. errno=" + str(GetLastError())
+        logging.error(msg)
+    return handle
+
+
+def uninstall_hook(handle):
+    """Uninstall the keyboard hook.
+
+    Args:
+        handle: Handle to the hook procedure.
+    """
+    if handle:
+        user32.UnhookWindowsHookEx(handle)
+
+
 def is_pressed(vkey) -> bool:
     """Determine whether a key is pressed
 
