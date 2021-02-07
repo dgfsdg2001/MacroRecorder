@@ -18,8 +18,17 @@ WH_MOUSE_LL = 14        # Hook ID for low-level mouse input events
 # Keyboard input notifications
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/keyboard-input-notifications
 WM_KEYDOWN = 0x0100       # Posted when a nonsystem key is pressed
+WM_KEYUP = 0x0101         # Posted when a nonsystem key is released
+WM_SYSKEYDOWN = 0x0104    # Posted when the user presses the F10 key (which activates
+                          # the menu bar) or holds down the ALT key and then presses
+                          # another key.
+WM_SYSKEYUP = 0x0105      # Posted when the user releases a key that was pressed while
+                          # the ALT key was held down.
+WM_MOUSEMOVE = 0x0200     # Posted when the cursor moves
 WM_LBUTTONDOWN = 0x0201   # Posted when the user presses the left mouse button
+WM_LBUTTONUP = 0x0202     # Posted when the user releases the left mouse button
 WM_RBUTTONDOWN = 0x0204   # Posted when the user presses the right mouse button
+WM_RBUTTONUP = 0x0205     # Posted when the user releases the right mouse button
 
 # A code the hook procedure uses to determine how to process the keyboard/mouse
 # message.
@@ -109,6 +118,8 @@ VIRTUAL_KEYS = {
     0xA1: "RSHFT",      # Right SHIFT key
     0xA2: "LCTRL",      # Left CONTROL key
     0xA3: "RCTRL",      # Right CONTROL key
+    0xA4: "LALT",       # Left ALT key
+    0xA5: "RALT",       # Right ALT key
     0xBA: ";",      # `;` for US standard keyboard. vary by keyboard
     0xBB: "+",
     0xBC: ",",
